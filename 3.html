@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <link rel="shortcut icon" href="/img/Untitled-1.ico">
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Chapter.1 적응</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./node_modules/three/build/three.js"></script>
+    <script src="js/devtools-detector.js"></script>
+    <title></title>
+</head>
+
+<body>
+    <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        { "imports": { "three": "./node_modules/three/build/three.module.js"} }
+    </script>
+    <div class="body">
+        <input id="flap" type="checkbox">
+        <label id="prevl" for="flap"></label></input>
+
+        <div id="front">
+            칠흑같은 밤도 그것이 눈에 익으면 동이 트기 직전의 새벽보다 밝다. 찬란한 광명과도 같은 빛줄기는 그 세기가 아무리 옅어도, 그 빛이 어디로부터 오더라도, 당신의 눈을 길들여 더 머나먼 곳을 내다볼 수 있게 해준다. <br><br>그렇다면, 당신은 눈 앞의 빛을 믿고 앞으로 나아갈 수 있는가?
+            <hr>
+            <div id="settings">
+                효과음
+                <input id="effectvolume" type="range" min="0" max="100" />
+            </div>
+            <div id="innerfront"></div>
+        </div>
+
+        <div id="warning">
+            책을 펼쳐보기엔 공간이 협소하다.<br>책의 두 장이 모두 보일 만큼의 넓은 공간을 찾자.<br><br>
+            <span style="font-size: 10pt;">본 게임은 모바일, 태블릿 환경에서 플레이할 수 없습니다.</span>
+        </div>
+
+        <div id="accessfail">
+            이전의 내용을 알 수 없다.<br>앞선 페이지를 읽은 후 다시 열람하자.<br><br>
+            <span style="font-size: 10pt;">본 페이지를 플레이하려면 이전 페이지를 클리어하십시오.</span>
+        </div>
+
+        <div id="maincontents">
+            <div class="page">
+                <div id="page" class="content">
+
+                    <div id="mainstory">
+                        <span>문 바깥으로 걸어나온 끝에, 지훈은 넓고 긴 복도에 다다랐다.</span>
+                        <span>넓은 창 안으로 새어들어온 칠흑같이 어두운 달빛이 암실에 적응된 그의 두 눈을 새로이 길들였다. 
+                            그의 시야에 있어 달빛은 과분하게 찬란했다.</span>
+                        <br>
+                        <br>
+                    </div>
+                    <br>
+                    <br>
+                    <span id="hint" style="font-size: 11pt; opacity: 50%;">복도를 돌아다니며 E키를 이용하여 복도 내부의 가구들을 3개 이상 조사하자.</span>
+                </div>
+            </div>
+            <div id="border">
+                <div id="innerborder"></div>
+            </div>
+            <div class="page" id="gamepage" onclick="next(4);">
+                <div id="interact">E키를 눌러 상호작용</div>
+                <div id="reticle"></div>
+                <div id="clear">
+                    <span>벽을 짚어가며 둘러보다 화장실 문을 찾은 지훈은 절뚝거리며 화장실 안으로 들어섰다.</span>
+                    <br>
+                    <br>
+                    <span style="font-size: 11pt; opacity: 50%;">창의 오른쪽 모서리를 클릭하여 다음 장으로 넘어가자.</span>
+                </div>
+                <div id="game">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="info">
+            <div class="infpage">
+                <div class="countl">5</div>
+                <div class="subhead">적응</div>
+            </div>
+            <div class="infpage">
+                <div class="countr">6</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="js/base.js"></script>
+<script type="module" src="./node_modules/main.js"></script>
+<script type="module" src="./node_modules/5_6page.js"></script>
+
+</html>

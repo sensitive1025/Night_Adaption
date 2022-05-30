@@ -1,0 +1,541 @@
+@import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css);
+.nanummyeongjo * {
+    font-family: 'Nanum Myeongjo', serif;
+}
+
+@font-face {
+    font-family: 'KBIZHanmaumMyungjo';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/KBIZHanmaumMyungjo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'KOTRALEAP';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/KOTRALEAP.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'establishRetrosansOTF';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2112@1.0/establishRetrosansOTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#loading {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.675);
+}
+
+#accessfail {
+    padding: 50px;
+    box-sizing: border-box;
+    background-color: white;
+    display: none;
+    height: 100vh;
+    width: 100vw;
+    font-family: 'Nanum Myeongjo';
+    font-size: 14pt;
+    position: absolute;
+    z-index: 150;
+}
+
+#loading>div>div {
+    padding: 2px;
+}
+
+.progress {
+    width: 50vw;
+}
+
+#progressbar {
+    width: 0;
+    transition: width ease-out .5s;
+    height: 1em;
+    background-color: #888;
+    background-size: 50px 50px;
+    animation: progressanim 2s linear infinite;
+}
+
+@keyframes progressanim {
+    0% {
+        background-position: 50px 50px;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
+
+#adapt {
+    font-size: 30pt;
+    font-family: 'establishRetrosansOTF';
+}
+
+#flap:checked~#front {
+    left: 0;
+    transition: 0.5s ease;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: rgb(0, 0, 0);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: #ffffff;
+    cursor: pointer;
+    border: 1px solid #00000033;
+    height: 16px;
+    width: 10px;
+    margin-top: 0px;
+    box-shadow: 1px 1px 1px #00000036;
+    border-radius: 3px;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type=range]::-webkit-fill-lower {
+    background: #2a6495;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+input[type=range]::-webkit-fill-upper {
+    background: #000000;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+input[type="checkbox"]+label:hover {
+    display: block;
+    background-color: black;
+    box-shadow: 0px 0px 40px 40px rgba(0, 0, 0, 1);
+    opacity: 20%;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+input[type="checkbox"]:checked+label:hover {
+    display: block;
+    background-color: black;
+    box-shadow: 0px 0px 80px 80px rgba(0, 0, 0, 1);
+    opacity: 20%;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+label {
+    position: absolute;
+    opacity: 0;
+    z-index: 30;
+}
+
+input[type="checkbox"]+label {
+    display: block;
+    width: 2vw;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 20%;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked+label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 20%;
+    cursor: pointer;
+}
+
+#flap {
+    position: absolute;
+    z-index: 100;
+    height: 100%;
+    width: 8vw;
+}
+
+input #flap {
+    display: none;
+}
+
+#flap:checked~#front {
+    left: 0;
+    transition: 0.5s ease;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+label {
+    position: absolute;
+    opacity: 0;
+    transition: 0.5s ease;
+    z-index: 100;
+}
+
+span a {
+    text-decoration: none;
+    color: black;
+}
+
+span a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+span a:hover {
+    color: black;
+    text-decoration: none;
+}
+
+input[type="button"] {
+    display: none;
+}
+
+input[type="button"]+#nextl:hover {
+    display: block;
+    background-color: black;
+    box-shadow: 0px 0px 40px 40px rgba(0, 0, 0, 1);
+    opacity: 20%;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+#nextl {
+    position: absolute;
+    opacity: 0;
+    transition: 0.5s ease;
+    z-index: 120;
+    right: 0;
+}
+
+input[type="button"]+#nextl {
+    display: block;
+    width: 2vw;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 20%;
+    cursor: pointer;
+}
+
+#next {
+    position: absolute;
+    z-index: 120;
+    height: 100%;
+    width: 10vw;
+}
+
+#next:checked~#front {
+    left: 0;
+    transition: 0.5s ease;
+}
+
+.body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    font-family: 'KBIZHanmaumMyungjo';
+    font-size: 14pt;
+    text-align: justify;
+    overflow: hidden;
+}
+
+.page {
+    padding: 50px;
+    padding-bottom: 70px;
+    width: 50vw;
+    height: 100vh;
+    float: left;
+    box-sizing: border-box;
+    font-family: 'KBIZHanmaumMyungjo';
+    text-align: justify;
+    font-size: 14pt;
+    z-index: 100;
+}
+
+#border {
+    height: 100vh;
+    width: 3px;
+    position: absolute;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.447);
+    left: 50%;
+    box-shadow: 0px 0px 200px 80px rgba(0, 0, 0, 0.484);
+}
+
+#innerborder {
+    height: 100vh;
+    width: 2px;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.319);
+    z-index: 100;
+    box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.835);
+}
+
+#game {
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.content {
+    height: 100%;
+    width: 100%;
+    z-index: 120;
+    transition: 0.5s ease;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.backcontent {
+    height: 100%;
+    width: 100%;
+}
+
+#reticle {
+    border-radius: 3px;
+    width: 3px;
+    height: 3px;
+    background-color: white;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 50%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+    bottom: 50%;
+    z-index: 100;
+}
+
+#interact {
+    z-index: 3;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 0 auto;
+    opacity: 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 75%;
+    bottom: 200px;
+    color: white;
+    font-size: 10pt;
+    background-color: rgba(85, 85, 85, 0);
+    text-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.442);
+    transition: 0.5s ease;
+    transform: translate(-50%, 0);
+}
+
+#clear {
+    height: 100%;
+    width: 100%;
+    opacity: 0%;
+    position: absolute;
+    background-color: white;
+    z-index: -80;
+    transition: 0.5s ease;
+}
+
+#front {
+    overflow-y: scroll;
+    text-align: justify;
+    z-index: 100;
+    padding: 50px;
+    left: -40vw;
+    transition: 0.5s ease;
+    background-color: rgb(255, 255, 255);
+    box-sizing: border-box;
+    height: 100vh;
+    font-size: 14pt;
+    color: rgb(0, 0, 0);
+    position: absolute;
+    width: 30vw;
+    box-shadow: 0px 0px 30px 30px rgba(0, 0, 0, 0.313);
+    margin: 0;
+    font-family: 'KBIZHanmaumMyungjo';
+    font-size: 12pt;
+}
+
+#settings {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#innerfront {
+    display: flex;
+    background-color: rgb(0, 0, 0);
+    height: 150%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 15px;
+    box-shadow: 0px 0px 150px 60px rgba(44, 44, 44, 0.349);
+    margin: 0;
+    font-family: 'KBIZHanmaumMyungjo';
+    font-size: 13pt;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow: hidden;
+}
+
+.countl {
+    display: inline-block;
+    vertical-align: bottom;
+    font-size: 13pt;
+}
+
+.subhead {
+    display: inline-block;
+    vertical-align: bottom;
+    font-size: 13pt;
+    float: right;
+}
+
+.info {
+    position: fixed;
+    bottom: 0;
+}
+
+.infpage {
+    padding: 50px;
+    padding-bottom: 40px;
+    padding-top: 0px;
+    width: 50vw;
+    float: left;
+    box-sizing: border-box;
+    font-family: 'KBIZHanmaumMyungjo';
+    text-align: justify;
+    font-size: 12pt;
+    z-index: -1;
+}
+
+#title {
+    text-align: center;
+    font-family: 'establishRetrosansOTF';
+    color: rgb(255, 255, 255);
+    font-size: 70pt;
+    position: absolute;
+    vertical-align: center;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    text-shadow: 0px 0px 30px rgb(0, 0, 0);
+    height: auto;
+}
+
+#maincontents {
+    display: block;
+}
+
+#subtitle {
+    font-size: 40pt;
+    font-family: 'establishRetrosansOTF';
+}
+
+.countr {
+    position: relative;
+    vertical-align: bottom;
+    text-align: right;
+    font-size: 13pt;
+}
+
+#warning {
+    display: none;
+}
+
+@media screen and (max-width: 960px) {
+    #title {
+        text-align: center;
+        font-family: 'establishRetrosansOTF';
+        color: rgb(0, 0, 0);
+        font-size: 60pt;
+        position: absolute;
+        vertical-align: center;
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    #warning {
+        padding: 50px;
+        box-sizing: border-box;
+        background-color: white;
+        display: block;
+        height: 100vh;
+        width: 100vw;
+        font-family: 'Nanum Myeongjo';
+        font-size: 14pt;
+        position: absolute;
+        z-index: 150;
+    }
+    #maincontents {
+        display: none;
+    }
+}
+
+@media screen and (max-height: 710px) {
+    #warning {
+        padding: 50px;
+        box-sizing: border-box;
+        background-color: white;
+        display: block;
+        height: 100vh;
+        width: 100vw;
+        font-family: 'Nanum Myeongjo';
+        font-size: 14pt;
+        position: absolute;
+        z-index: 150;
+    }
+    #maincontents {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 524px) {
+    #warning {
+        padding: 30px;
+        box-sizing: border-box;
+        background-color: white;
+        display: block;
+        height: 100vh;
+        width: 100vw;
+        font-family: 'Nanum Myeongjo';
+        font-size: 12pt;
+        position: absolute;
+        z-index: 150;
+    }
+}
