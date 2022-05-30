@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { GLTFLoader } from './three/examples/jsm/loaders/GLTFLoader.js';
-import { Octree } from './three/examples/jsm/math/Octree.js';
-import { Capsule } from './three/examples/jsm/math/Capsule.js';
+import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { Octree } from '../node_modules/three/examples/jsm/math/Octree.js';
+import { Capsule } from '../node_modules/three/examples/jsm/math/Capsule.js';
 
 //쿠키를 이용하면 일정 시간 동안 클라이언트의 디렉토리에 특정 정보를 문자열로 기록할 수 있다.
 function setCookie(key, value, expiredays) { //웹사이트에 쿠키를 저장한다.
