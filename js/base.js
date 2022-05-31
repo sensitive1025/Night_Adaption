@@ -35,7 +35,7 @@ function next(index) {
         audio.volume = effectVolume.value / 100;
         audio.play();
         setTimeout(() => {
-            location.href = index + ".html";
+            location.href = index;
         }, 800);
     } else {
         audio = new Audio('sounds/fail.mp3');
