@@ -1,6 +1,6 @@
 import { loadScene, PickHelper, playAudio, camera, scene, setCookie, getCookie } from "./main.js";
 
-loadScene('scene1');
+loadScene('scene1', -0.138, 0.6, 0);
 const pickCamera = camera;
 const pickScene = scene;
 let locked = 0;

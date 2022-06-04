@@ -1,6 +1,6 @@
 import { loadScene, PickHelper, playAudio, camera, scene, setCookie, getCookie } from "./main.js";
 
-loadScene('scene2');
+loadScene('scene2', -0.138, 1.2, 0);
 let innerwindowinteract = 0;
 let barricateinteract = 0;
 let windowinteract = 0; //창문과 상호작용했는지 확인하는 변수
@@ -11,7 +11,7 @@ let toilet = 0; //2차 미션의 시작을 나타낼 변수
 let poster = 0;
 
 var container = document.getElementById('game'); //문서에서 game ID를 지닌 객체,게임이 들어가는 영역
-var noYouCant = document.getElementById('accessfail');
+var noYouCant = document.getElementById('accessfail'); //이전 페이지를 클리어하지 않으면 접근 제한 메시지를 띄울 영역
 
 const pickCamera = camera;
 const pickScene = scene;
@@ -19,7 +19,6 @@ const items = ['Back_1', 'Back_2', 'Back_3', 'Back_4',
     'Door_1', 'Door_1_1', 'Door_1_2', 'Door_1_3',
     'Door_1_4', 'Door_1_5', 'Door_1_6', 'Door_1_7',
     'Door_1_8', 'Door_1_9', 'Door_1_10', 'Door_1_11',
-    'Door_male', 'Door_male_1', 'Door_male_2', 'door_male_1',
     'Cylinder_1', 'Cylinder_1_1', 'Cylinder_1_2', 'Cylinder_1_3',
     'Cylinder_1_4', 'Cylinder_1_5', 'Cylinder_1_6', 'Cylinder_1_7',
     'Cylinder_1_8', 'Cylinder_1_9', 'Cylinder_1_10', 'Cylinder_1_11',
@@ -31,19 +30,19 @@ const items = ['Back_1', 'Back_2', 'Back_3', 'Back_4',
     'Cylinder_8', 'Cylinder_9', 'Cylinder_10', 'Cylinder_11',
     'Outerwindow', 'Outerwindow_1', 'Window_1', 'block_1', 'Window', 'Poster'
 ];
-const pickHelper = new PickHelper(items);
+const pickHelper = new PickHelper(items); //클래스 선언!
 const keyStates = {};
 
-if (getCookie('1stage') != 'clear') {
-    noYouCant.style.display = 'block';
+if (getCookie('1stage') != 'clear') { //만약 이전 스테이지가 클리어되지 않았다면?
+    noYouCant.style.display = 'block'; //넌 못 지나간다
 }
 
 document.addEventListener('keydown', (event) => { //키가 눌려져있는가?
-    keyStates[event.code] = true;
+    keyStates[event.code] = true; //입력한 키 값 참으로!
 });
 
-let interacted = pickHelper.interactedOut();
-let interactive = pickHelper.interactiveOut();
+let interacted = pickHelper.interactedOut(); //클래스에서 "상호작용 가능한가?" 변수 가져오기
+let interactive = pickHelper.interactiveOut(); //클래스에서 "상호작용할 수 있는 물체가 무엇인가?" 변수 가져오기
 
 function control() {
     if (keyStates['KeyE']) {
@@ -124,7 +123,7 @@ function interactionManage(interacted, interactive, audio) {
                 interactCount(interactcount);
                 toilet = false; //동일한 내용이 계속 추가되는 것을 방지한다.
                 setCookie("2stage", "clear", 7); //2스테이지를 클리어했음을 쿠키에 7일간 저장한다.
-
+                playAudio(audio);
                 container.remove();
                 clear.style.zIndex = "80";
                 clear.style.opacity = "100%"; //게임창을 가리고 문서에 클리어 메시지를 출력한다.
@@ -150,9 +149,10 @@ function interactCount(count) {
         const content = document.createTextNode("그가 복도 안을 서성거리던 무렵, 그는 어깨의 반쯤 아문 상처가 트더져 흐른 피가 어깨를 적시는 것을 느꼈다. 지훈은 무의식적으로 굳은 피를 닦을 수 있는 장소를 찾아 헤메였다.");
         element.appendChild(content);
         toilet = true;
+        items.push('Door_male', 'Door_male_1', 'Door_male_2', 'door_male_1');
         var hint = document.getElementById("hint");
         hint.innerText = "복도 깊숙히 화장실을 찾아 들어가자.";
-        hint.style.color = "red";
+        hint.style.color = "#016090";
     }
     if (count == 4) {
         return false;
@@ -161,6 +161,7 @@ function interactCount(count) {
     element.appendChild(document.createElement("BR"));
     document.querySelector('#page').scrollTo(0, document.querySelector('#page').scrollHeight);
 }
+
 picking();
 
 function picking(time) {

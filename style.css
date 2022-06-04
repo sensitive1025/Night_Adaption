@@ -24,17 +24,36 @@
     font-style: normal;
 }
 
-#loading {
+@font-face {
+    font-family: '행복고흥L';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/행복고흥L.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#GAMEOVER {
+    margin: 0 auto;
     position: absolute;
-    left: 0;
-    top: 0;
     width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-shadow: 0 0 30px #0000005b;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.675);
+    padding-top: 200px;
+    font-size: 80pt;
+    font-family: 'Tiro Devanagari Marathi', serif;
+    color: white;
+}
+
+#deadmessage {
+    margin: 0 auto;
+    font-family: 'Nanum Myeongjo', serif;
+    position: absolute;
+    width: 100%;
+    text-shadow: 0 0 30px #0000005b;
+    text-align: center;
+    padding-top: 140px;
+    font-size: 13pt;
+    color: white;
+    opacity: 50%;
 }
 
 #accessfail {
@@ -48,32 +67,6 @@
     font-size: 14pt;
     position: absolute;
     z-index: 150;
-}
-
-#loading>div>div {
-    padding: 2px;
-}
-
-.progress {
-    width: 50vw;
-}
-
-#progressbar {
-    width: 0;
-    transition: width ease-out .5s;
-    height: 1em;
-    background-color: #888;
-    background-size: 50px 50px;
-    animation: progressanim 2s linear infinite;
-}
-
-@keyframes progressanim {
-    0% {
-        background-position: 50px 50px;
-    }
-    100% {
-        background-position: 0 0;
-    }
 }
 
 #adapt {
@@ -423,7 +416,8 @@ body {
 }
 
 .info {
-    position: fixed;
+    position: absolute;
+    margin: 0 auto;
     bottom: 0;
 }
 

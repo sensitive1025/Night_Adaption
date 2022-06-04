@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { Octree } from '../node_modules/three/examples/jsm/math/Octree.js';
 import { Capsule } from '../node_modules/three/examples/jsm/math/Capsule.js';
-
+import { FBXLoader } from "../node_modules/three/examples/jsm/loaders/FBXLoader.js";
 //쿠키를 이용하면 일정 시간 동안 클라이언트의 디렉토리에 특정 정보를 문자열로 기록할 수 있다.
 function setCookie(key, value, expiredays) { //웹사이트에 쿠키를 저장한다.
     var todayDate = new Date(); //오늘 날짜!
@@ -26,6 +26,8 @@ function getCookie(key) { //웹사이트에 저장된 쿠키를 불러오고 파
     return result;
 }
 
+let mixer;
+const mixers = [];
 const clock = new THREE.Clock(); //시계를 생성한다.
 const scene = new THREE.Scene(); //장면을 생성한다.
 scene.background = new THREE.Color(0x011220); //장면의 배경색을 설정한다.
@@ -33,7 +35,6 @@ scene.fog = new THREE.Fog(0x000203, 1, 20); //장면에 안개를 생성한다.
 var page = document.getElementById('gamepage'); //문서에서 gamepage ID를 지닌 객체 container가 들어가는 영역
 var container = document.getElementById('game'); //문서에서 game ID를 지닌 객체,게임이 들어가는 영역
 var info = document.getElementById('interact'); //문서에서 상호작용 가능을 알릴 객체
-var clear = document.getElementById('clear'); //문서에서 스테이지 클리어를 알릴 객체
 let interacted = false; //상호작용할 수 있는 거리에 있는지 판별할 변수
 var audio = new Audio; //효과음
 
@@ -50,7 +51,6 @@ const camera = new THREE.PerspectiveCamera( //장면을 촬영할 카메라
     1000 //촬영할 가장 먼 거리
 );
 camera.rotation.order = 'YXZ'; // 카메라의 각도계를 YXZ로 설정한다.
-camera.rotation.set(-0.138, 0.51, 0);
 const fillLight1 = new THREE.HemisphereLight(0x000000, 0x111111, 0.1); //하늘과 땅, 장면 전체를 밝히는 광원을 생성한다.
 fillLight1.position.set(0, -1, 1);
 scene.add(fillLight1); //장면에 조명 추가!
@@ -73,35 +73,36 @@ flashLight.shadow.camera.near = 0.5; // default
 flashLight.shadow.camera.far = 500; // default
 flashLight.shadow.focus = 1; // default
 
-renderer.setPixelRatio(window.devicePixelRatio); //픽셀의 종횡비 설정
-renderer.setSize(page.offsetWidth, page.offsetHeight);
-renderer.shadowMap.enabled = true; //그림자 켜기 
-renderer.shadowMap.type = THREE.VSMShadowMap;
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-page.appendChild(container); //ID가 gamepage인 div에 ID가 game인 div를 상속시켜라!
-container.appendChild(renderer.domElement); //ID가 game인 div에 게임 화면을 상속시켜라!
-
+function init() {
+    renderer.setPixelRatio(window.devicePixelRatio); //픽셀의 종횡비 설정
+    renderer.setSize(page.offsetWidth, page.offsetHeight);
+    renderer.shadowMap.enabled = true; //그림자 켜기 
+    renderer.shadowMap.type = THREE.VSMShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    page.appendChild(container); //ID가 gamepage인 div에 ID가 game인 div를 상속시켜라!
+    container.appendChild(renderer.domElement); //ID가 game인 div에 게임 화면을 상속시켜라!   
+}
 
 const GRAVITY = 30; //플레이어에게 적용될 중력
 
-const STEPS_PER_FRAME = 5;
+const STEPS_PER_FRAME = 1.8;
 
 const worldOctree = new Octree(); //모델의 물리적인 구조를 담당하는 변수
 
-const playerCollider = new Capsule(new THREE.Vector3(-1, 0.35, 0), new THREE.Vector3(-1, 2, 0), 0.35); //플레이어의 물리적인 형태, 세로로 긴 캡슐 모양
-
+const playerCollider = new Capsule(new THREE.Vector3(0, 0.35, 0), new THREE.Vector3(0, 2, 0), 0.35); //플레이어의 물리적인 형태, 세로로 긴 캡슐 모양
+const zombieCollider = new Capsule(new THREE.Vector3((9, 0.55, 25), new THREE.Vector3(9, 1.25, 25), 0.1)); //플레이어의 물리적인 형태, 세로로 긴 캡슐 모양
 const playerVelocity = new THREE.Vector3(); //플레이어의 속도
 const playerDirection = new THREE.Vector3(); //플레이어의 방향
+const zombieVelocity = new THREE.Vector3(); //플레이어의 속도
+const zombieDirection = new THREE.Vector3(); //플레이어의 방향
 
 let playerOnFloor = false; //플레이어의 아래에 바닥이 있는지 확인하는 변수
+let zombieOnFloor = false; //플레이어의 아래에 바닥이 있는지 확인하는 변수
 let interactive;
+let damping;
 
 const keyStates = {}; //입력한 키의 코드
-
-const vector1 = new THREE.Vector3();
-const vector2 = new THREE.Vector3();
-const vector3 = new THREE.Vector3();
 
 class PickHelper {
     constructor(itemList) {
@@ -145,12 +146,12 @@ class PickHelper {
         }
     }
 }
+init();
 
-function loadScene(scenename) {
+function loadScene(scenename, Y, X, Z) {
     const loader = new GLTFLoader(); //3D 모델 파일을 불러올 로더
-
+    camera.rotation.set(Y, X, Z);
     loader.load('model/' + scenename + '.glb', (gltf) => { //glb 파일을 불러온다.
-
         scene.add(gltf.scene); //불러온 모델을 장면에 추가한다!
         worldOctree.fromGraphNode(gltf.scene); //불러온 모델의 물리적인 구조를 만든다.
         gltf.scene.traverse(child => { //모델의 하위 모델(벽, 바닥, 문, 책상 등)에 그림자를 설정한다.
@@ -164,6 +165,74 @@ function loadScene(scenename) {
         });
         animate();
     });
+}
+
+let mesh;
+
+function zombieIdleLoad() {
+    let fbxURL = "../model/Zombie Idle.fbx"; //가만히 있는 좀비
+    const loader = new FBXLoader();
+    loader.load(fbxURL,
+        function(object) {
+            mixer = new THREE.AnimationMixer(object);
+            mixers.push(mixer); //재생할 애니메이션 목록에 숨쉬는 모션 추가
+            console.log(mixer);
+            const action = mixer.clipAction(object.animations[1]);
+            action.play(); //숨쉬는 애니메이션 재생!
+            mesh = object;
+            object.traverse(function(child) {
+
+                if (child.isMesh) {
+
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                }
+
+            });
+            animate();
+            object.scale.set(0.02, 0.02, 0.02); //좀비 모델 크기 조정!
+            object.position.set(9, -0.25, 25); //좀비의 위치를 복도 끝으로!
+            object.rotation.set(0, Math.PI, 0); //좀비가 반대편을 보게!
+            zombieCollider.start.set(9, -0.5, 25); //좀비의 물리적 모형 생성!
+            zombieCollider.end.set(9, 1.25, 25);
+            scene.add(object); //장면에 좀비 소환!
+        }
+    );
+}
+
+let zombie;
+
+function zombieLoad() {
+    let fbxURL = "../model/Zombie Running.fbx"; //달리는 좀비
+    const loader = new FBXLoader();
+    loader.load(fbxURL,
+        function(object) {
+            mixer = new THREE.AnimationMixer(object);
+            mixers.push(mixer);
+            console.log(mixer);
+            const action = mixer.clipAction(object.animations[0]);
+            action.play();
+            zombie = object;
+            object.traverse(function(child) {
+
+                if (child.isMesh) {
+
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                }
+
+            });
+            animate();
+            object.scale.set(0.02, 0.02, 0.02);
+            object.position.set(9, 0.5, 25);
+            object.rotation.set(0, Math.PI, 0);
+            scene.add(object);
+        }
+    );
+    setTimeout(() => { scene.remove(mesh) }, 1000);
+
 }
 
 document.addEventListener('keydown', (event) => { //키가 눌려져있는가?
@@ -204,16 +273,13 @@ function onWindowResize() { //창의 크기가 조절되었을 때 게임 화면
 }
 
 function playAudio(audioName) {
-    console.log(audioName);
     audio = new Audio(audioName);
     audio.play();
 }
 
 function playerCollisions() { //플레이어가 물리적으로 접촉하고 있을 때, 충돌 구현
     const result = worldOctree.capsuleIntersect(playerCollider); //플레이어가 다른 모델에 닿아있는가?
-
     playerOnFloor = false; //플레이어가 바닥에 있지 않을 땐 거짓으로 설정.
-
     if (result) { //만약 플레이어가 다른 모델(벽, 바닥)과 닿아있으면
 
         playerOnFloor = result.normal.y > 0; //다른 모델과 플레이어가 y축과 방향으로 만나는가?
@@ -227,15 +293,35 @@ function playerCollisions() { //플레이어가 물리적으로 접촉하고 있
     }
 }
 
+function zombieCollisions() { //좀비가 물리적으로 접촉하고 있을 때, 충돌 구현
+    const zresult = worldOctree.capsuleIntersect(zombieCollider); //좀비가 다른 모델에 닿아있는가?
+    zombieOnFloor = false; //좀비가 바닥에 있지 않을 땐 거짓으로 설정.
+    if (Math.abs(playerCollider.end.x - zombieCollider.end.x) < 1 && Math.abs(playerCollider.end.y - zombieCollider.end.y) < 1 && Math.abs(playerCollider.end.z - zombieCollider.end.z) < 1) {
+
+        location.href = "GAMEOVER";
+    } //좀비와 플레이어가 접촉했는지 감지
+    if (zresult) { //만약 플레이어가 다른 모델(벽, 바닥)과 닿아있으면
+
+        zombieOnFloor = zresult.normal.y > 0; //다른 모델과 플레이어가 y축과 방향으로 만나는가?
+
+        if (!zombieOnFloor) { //y축과 수직하는 방향으로 만나지 않으면 좀비에게 원래 속도를 부여한다.
+            zombieVelocity.addScaledVector(zresult.normal, -zresult.normal.dot(zombieVelocity));
+        }
+
+        zombieCollider.translate(zresult.normal.multiplyScalar(zresult.depth));
+
+    }
+}
+
 function updatePlayer(deltaTime) { //플레이어의 위치 상태를 업데이트
-    let damping = Math.exp(-4 * deltaTime) - 1; //공기저항을 구현하기 위한 변수
+    damping = Math.exp(-6 * deltaTime) - 1; //공기저항을 구현하기 위한 변수
 
     if (!playerOnFloor) {
 
         playerVelocity.y -= GRAVITY * deltaTime; //바닥에 닿아있지 않다면 중력가속도를 부여한다.
 
         //작은 양의 가속도
-        damping *= 0.001;
+        damping *= 0.0005;
 
     }
 
@@ -250,9 +336,55 @@ function updatePlayer(deltaTime) { //플레이어의 위치 상태를 업데이�
     flashLight.position.copy(playerCollider.end);
 }
 
+function updateZombie(deltaTime) { //좀비의 위치 상태를 업데이트
+    damping = Math.exp(-6 * deltaTime) - 1;
+
+    if (!zombieOnFloor) {
+
+        zombieVelocity.y -= GRAVITY * deltaTime;
+
+        damping *= 0.0005;
+
+    }
+
+    zombieVelocity.addScaledVector(zombieVelocity, damping); //좀비를 가속시킨다.
+
+    const deltaPosition = zombieVelocity.clone().multiplyScalar(deltaTime); //좀비의 속도만큼 좀비의 변위를 만든다.
+    zombieCollider.translate(deltaPosition); //변위만큼 좀비를 움직인다.
+
+    zombieCollisions();
+
+    if (zombie != undefined) {
+        zombie.position.x = zombieCollider.start.x;
+        zombie.position.y = zombieCollider.start.y - 0.8;
+        zombie.position.z = zombieCollider.start.z;
+    }
+}
+
+function zombieMove(deltaTime) { //좀비가 앞으로 향하는 벡터를 형성한다.
+    zombieDirection.y = 0; //좀비의 이동 방향의 y축 성분 제거
+    zombieDirection.normalize(); //좀비가 대각선으로 향한다면 벡터합에 의해 더 멀리 이동하므로 벡터의 크기를 정상화한다.
+    zombieVelocity.add(zombieDirection.multiplyScalar(deltaTime * (zombieOnFloor ? 58 : 8)));
+}
+
+function zombieDirect(deltaTime) {
+    if (zombie != undefined) {
+        if (playerCollider.end.x - zombieCollider.end.x > 0) {
+            zombie.rotation.y = Math.asin((zombieCollider.end.z - playerCollider.end.z) / Math.sqrt(Math.pow(playerCollider.end.x - zombieCollider.end.x, 2) + Math.pow(playerCollider.end.z - zombieCollider.end.z, 2)));
+        } //플레이어와 좀비의 x, z 위치 차이를 이용해 arcsin을 구하여 좀비 모델의 각도에 저장한다.
+        else {
+            zombie.rotation.y = Math.PI - Math.asin((zombieCollider.end.z - playerCollider.end.z) / Math.sqrt(Math.pow(playerCollider.end.x - zombieCollider.end.x, 2) + Math.pow(playerCollider.end.z - zombieCollider.end.z, 2)));
+        } //만약 x 위치 차가 0보다 작아진다면 구하고자 하는 값이 arcsin의 엇각이 되므로 PI에서 구한 값을 빼준다.
+        zombie.rotation.y += Math.PI / 2; //좀비 3D 모델이 바라보는 각도와 계산한 각도의 차이 보정
+        zombie.getWorldDirection(zombieDirection); //좀비 3D 모델이 바라보는 각도로 좀비의 이동 방향 설정
+        zombieDirection.y = 0;
+
+    }
+}
+
 function getForwardVector() { //플레이어가 앞으로 향하는 벡터를 형성한다.
-    camera.getWorldDirection(playerDirection); //카메라의 방향을 플레이어의 이동 방향으로 설정
-    playerDirection.y = 0; //플레이어의 이동 방향의 y축 성분 제거
+    camera.getWorldDirection(playerDirection); //플레이어의 이동 방향을 카메라의 방향으로 설정
+    playerDirection.y = 0; //플레이어의 이동 방향의 y축 성분 제거 (아래를 보고 이동하면 안돼!!)
     playerDirection.normalize(); //플레이어가 대각선으로 향한다면 벡터합에 의해 더 멀리 이동하므로 벡터의 크기를 정상화한다.
     return playerDirection;
 }
@@ -266,8 +398,7 @@ function getSideVector() { //플레이어가 옆으로 향하는 벡터를 형�
 }
 
 function controls(deltaTime) { //키보드 조작을 다룬다.
-    //W,A,S,D 
-    const speedDelta = deltaTime * (playerOnFloor ? 25 : 8);
+    const speedDelta = deltaTime * (playerOnFloor ? 25 : 4);
     if (keyStates['KeyW']) {
         playerVelocity.add(getForwardVector().multiplyScalar(speedDelta));
     }
@@ -291,7 +422,7 @@ function controls(deltaTime) { //키보드 조작을 다룬다.
 function teleportPlayerIfOob() { //혹여나 플레이어가 맵 바깥으로 떨어졌을 때, 원래 위치로 돌려보낸다.
     if (camera.position.y <= -25) {
         playerCollider.start.set(0, 0.35, 0);
-        playerCollider.end.set(0, 1, 0);
+        playerCollider.end.set(0, 2, 0);
         playerCollider.radius = 0.25;
         camera.position.copy(playerCollider.end);
         camera.rotation.set(0, 0, 0);
@@ -307,17 +438,26 @@ function animate(time) {
         updatePlayer(deltaTime);
         teleportPlayerIfOob();
     }
+    for (const mixer of mixers) {
+        mixer.update(deltaTime); //리스트에 저장된 애니메이션을 실행시켜러!
+    }
     audio.volume = effectVolume.value / 100; //효과음의 볼륨을 슬라이더 값의 백분율로 설정한다.
     renderer.render(scene, camera);
-    requestAnimationFrame(animate); //animate함수를 끈임없이 반복적으로 실행해라!
+    requestAnimationFrame(animate); //animate함수를 프레임마다 끈임없이 반복적으로 실행해라!
 }
 
-export {
+export { //본 스크립트의 함수를 다른 스크립트에서 쓸 수 있도록 출력한다.
     PickHelper,
     loadScene,
     playAudio,
     scene,
     camera,
     setCookie,
-    getCookie
+    getCookie,
+    zombieIdleLoad,
+    zombieLoad,
+    zombieMove,
+    zombieDirect,
+    updateZombie,
+    playerCollider
 };
