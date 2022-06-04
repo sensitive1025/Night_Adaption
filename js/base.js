@@ -43,13 +43,6 @@ function next(index) { //오른쪽 페이지를 클릭했을 때 호출될 함�
         audio.play();
     }
 }
-effectVolume.oninput = function() {
-    setCookie("effectvolume", effectVolume.value, 7);
+effectVolume.oninput = function() {//만약 효과음 볼륨을 조절했다면?
+    setCookie("effectvolume", effectVolume.value, 7); //쿠키에 저장!
 };
-
-var view = document.createElement('div');
-document.body.appendChild(view);
-devtoolsDetector.addListener(function(isOpen) {
-    document.location.href = "https://youtu.be/pd3eiF3bH38?t=89";
-});
-//devtoolsDetector.launch();
