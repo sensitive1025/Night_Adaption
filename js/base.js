@@ -36,13 +36,20 @@ function next(index) { //오른쪽 페이지를 클릭했을 때 호출될 함�
         audio.play(); //재생
         setTimeout(() => {
             location.href = index;
-        }, 800); //소리가 다 재생이 되면 다음 페이지로!
-    } else { //클리어 되지 않았다면?
-        audio = new Audio('sounds/fail.mp3'); //안돼!
+        }, 800);
+    } else {
+        audio = new Audio('sounds/fail.mp3');
         audio.volume = effectVolume.value / 100;
         audio.play();
     }
 }
-effectVolume.oninput = function() { //사용자가 효과음 크기를 설정했다면?
-    setCookie("effectvolume", effectVolume.value, 7); //7일간 쿠키 저장
+effectVolume.oninput = function() {
+    setCookie("effectvolume", effectVolume.value, 7);
 };
+
+var view = document.createElement('div');
+document.body.appendChild(view);
+devtoolsDetector.addListener(function(isOpen) {
+    document.location.href = "https://youtu.be/pd3eiF3bH38?t=89";
+});
+//devtoolsDetector.launch();
