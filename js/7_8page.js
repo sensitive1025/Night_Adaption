@@ -13,6 +13,7 @@ const keyStates = {};
 
 if (getCookie('2stage') != 'clear') {
     noYouCant.style.display = 'block';
+    setTimeout(() => { history.back(); }, 800);
 }
 
 document.addEventListener('keydown', (event) => { //키가 눌려져있는가?

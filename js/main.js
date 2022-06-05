@@ -89,16 +89,15 @@ const GRAVITY = 30; //플레이어에게 적용될 중력
 const STEPS_PER_FRAME = 1.8;
 
 const worldOctree = new Octree(); //모델의 물리적인 구조를 담당하는 변수
-
+const zombieCollider = new Capsule(new THREE.Vector3(9, 0.35, 25), new THREE.Vector3(9, 1, 25), 0.1); //플레이어의 물리적인 형태, 세로로 긴 캡슐 모양
 const playerCollider = new Capsule(new THREE.Vector3(0, 0.35, 0), new THREE.Vector3(0, 2, 0), 0.35); //플레이어의 물리적인 형태, 세로로 긴 캡슐 모양
-const zombieCollider = new Capsule(new THREE.Vector3((9, 0.55, 25), new THREE.Vector3(9, 1.25, 25), 0.1)); //플레이어의 물리적인 형태, 세로로 긴 캡슐 모양
 const playerVelocity = new THREE.Vector3(); //플레이어의 속도
 const playerDirection = new THREE.Vector3(); //플레이어의 방향
 const zombieVelocity = new THREE.Vector3(); //플레이어의 속도
 const zombieDirection = new THREE.Vector3(); //플레이어의 방향
 
 let playerOnFloor = false; //플레이어의 아래에 바닥이 있는지 확인하는 변수
-let zombieOnFloor = false; //플레이어의 아래에 바닥이 있는지 확인하는 변수
+let zombieOnFloor = false; //좀비의 아래에 바닥이 있는지 확인하는 변수
 let interactive;
 let damping;
 
@@ -192,11 +191,10 @@ function zombieIdleLoad() {
             });
             animate();
             object.scale.set(0.02, 0.02, 0.02); //좀비 모델 크기 조정!
-            object.position.set(9, -0.25, 25); //좀비의 위치를 복도 끝으로!
+            object.position.set(9, -0.35, 25); //좀비의 위치를 복도 끝으로!
             object.rotation.set(0, Math.PI, 0); //좀비가 반대편을 보게!
-            zombieCollider.start.set(9, -0.5, 25); //좀비의 물리적 모형 생성!
-            zombieCollider.end.set(9, 1.25, 25);
             scene.add(object); //장면에 좀비 소환!
+            console.log(zombieCollider.start);
         }
     );
 }
@@ -226,7 +224,6 @@ function zombieLoad() {
             });
             animate();
             object.scale.set(0.02, 0.02, 0.02);
-            object.position.set(9, 0.5, 25);
             object.rotation.set(0, Math.PI, 0);
             scene.add(object);
         }
@@ -296,10 +293,17 @@ function playerCollisions() { //플레이어가 물리적으로 접촉하고 있
 function zombieCollisions() { //좀비가 물리적으로 접촉하고 있을 때, 충돌 구현
     const zresult = worldOctree.capsuleIntersect(zombieCollider); //좀비가 다른 모델에 닿아있는가?
     zombieOnFloor = false; //좀비가 바닥에 있지 않을 땐 거짓으로 설정.
-    if (Math.abs(playerCollider.end.x - zombieCollider.end.x) < 1 && Math.abs(playerCollider.end.y - zombieCollider.end.y) < 1 && Math.abs(playerCollider.end.z - zombieCollider.end.z) < 1) {
-
-        location.href = "GAMEOVER";
-    } //좀비와 플레이어가 접촉했는지 감지
+    if (Math.abs(zombieCollider.start.x - playerCollider.start.x) < 4 && Math.abs(zombieCollider.start.z - playerCollider.start.z) < 4 && Math.abs(zombieCollider.start.y - playerCollider.start.y) < 2) { //좀비와 플레이어가 맞닿아있다면?
+        playerCollider.start.y = 100;
+        playerCollider.end.y = 100;
+        container.remove();
+        audio = new Audio('sounds/Zombie_Scream.mp3'); //좀비 비명 소리
+        audio.volume = effectVolume.value / 100;
+        audio.play(); //재생
+        setTimeout(() => {
+            location.href = "GAMEOVER"; //게임 오버 페이지로 이동
+        }, 1800);
+    }
     if (zresult) { //만약 플레이어가 다른 모델(벽, 바닥)과 닿아있으면
 
         zombieOnFloor = zresult.normal.y > 0; //다른 모델과 플레이어가 y축과 방향으로 만나는가?
@@ -341,7 +345,7 @@ function updateZombie(deltaTime) { //좀비의 위치 상태를 업데이트
 
     if (!zombieOnFloor) {
 
-        zombieVelocity.y -= GRAVITY * deltaTime;
+        zombieVelocity.y -= 0.01 * deltaTime;
 
         damping *= 0.0005;
 
@@ -356,7 +360,7 @@ function updateZombie(deltaTime) { //좀비의 위치 상태를 업데이트
 
     if (zombie != undefined) {
         zombie.position.x = zombieCollider.start.x;
-        zombie.position.y = zombieCollider.start.y - 0.8;
+        zombie.position.y = zombieCollider.start.y - 0.2;
         zombie.position.z = zombieCollider.start.z;
     }
 }
@@ -364,10 +368,10 @@ function updateZombie(deltaTime) { //좀비의 위치 상태를 업데이트
 function zombieMove(deltaTime) { //좀비가 앞으로 향하는 벡터를 형성한다.
     zombieDirection.y = 0; //좀비의 이동 방향의 y축 성분 제거
     zombieDirection.normalize(); //좀비가 대각선으로 향한다면 벡터합에 의해 더 멀리 이동하므로 벡터의 크기를 정상화한다.
-    zombieVelocity.add(zombieDirection.multiplyScalar(deltaTime * (zombieOnFloor ? 58 : 8)));
+    zombieVelocity.add(zombieDirection.multiplyScalar(deltaTime * (zombieOnFloor ? 40 : 8)));
 }
 
-function zombieDirect(deltaTime) {
+function zombieDirect() {
     if (zombie != undefined) {
         if (playerCollider.end.x - zombieCollider.end.x > 0) {
             zombie.rotation.y = Math.asin((zombieCollider.end.z - playerCollider.end.z) / Math.sqrt(Math.pow(playerCollider.end.x - zombieCollider.end.x, 2) + Math.pow(playerCollider.end.z - zombieCollider.end.z, 2)));

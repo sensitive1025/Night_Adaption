@@ -34,7 +34,8 @@ const pickHelper = new PickHelper(items); //클래스 선언!
 const keyStates = {};
 
 if (getCookie('1stage') != 'clear') { //만약 이전 스테이지가 클리어되지 않았다면?
-    noYouCant.style.display = 'block'; //넌 못 지나간다
+    noYouCant.style.display = 'block';
+    setTimeout(() => { history.back(); }, 800);
 }
 
 document.addEventListener('keydown', (event) => { //키가 눌려져있는가?

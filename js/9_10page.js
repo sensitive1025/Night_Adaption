@@ -7,6 +7,8 @@ loadScene('scene4', -0.138, 3.5, 0);
 var noYouCant = document.getElementById('accessfail');
 var container = document.getElementById('game'); //문서에서 game ID를 지닌 객체,게임이 들어가는 영역
 var info = document.getElementById('interact'); //문서에서 상호작용 가능을 알릴 객체
+const element = document.getElementById('mainstory');
+
 let scream = 0;
 const pickCamera = camera;
 const pickScene = scene;
@@ -19,6 +21,7 @@ zombieIdleLoad();
 
 if (getCookie('2stage') != 'clear') {
     noYouCant.style.display = 'block';
+    setTimeout(() => { history.back(); }, 800);
 }
 
 document.addEventListener('keydown', (event) => { //키가 눌려져있는가?
@@ -43,27 +46,22 @@ function control() {
     }
 }
 
-function Run(interactive) {
-    if (interactive == undefined) {
-
-        return 0;
-    }
-    if (interactive.name == "Ch30" || interactive.name == "Outerwindow_1" || playerCollider.end.x > 6) {
+function Run() {
+    if (playerCollider.end.x > 6) {
         if (scream == false) {
+
+            playAudio("sounds/Zombie_Scream.mp3");
             zombieLoad();
             var hint = document.getElementById("hint");
             hint.innerText = "도망가자.";
             hint.style.color = "#903016";
+            const content = document.createTextNode("얼마 가지 않아, 지훈은 복도 깊숙한 곳에서 사람의 형체를 발견했다. 허나 형체의 비이상적으로 큰 키와 기이한 움직임에 지훈은 큰 괴리감을 느꼈다. 그 순간, 그것이 울부짖으며 죽일 기세로 지훈에게 달려오기 시작했다.");
+            element.appendChild(content);
         }
         scream = true;
     }
 }
 
-const element = document.getElementById('mainstory');
-
-let DidYouHear = 0;
-let heard = 0;
-let fakeTap = 0;
 
 function interactionManage(interacted, interactive, audio) {
     console.log(interactive.name);

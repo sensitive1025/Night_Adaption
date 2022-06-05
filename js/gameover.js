@@ -45,7 +45,7 @@ spotLight.position.set(100, 200, 300);
 
 scene.add(spotLight);
 
-const effect = new THREE.AsciiEffect(renderer, '.NM', { invert: true }); //렌더링한 화면에 아스키아트 효과를 씌워주자!
+const effect = new THREE.AsciiEffect(renderer, '.NMVVVVVVVVVVVVV', { invert: true }); //렌더링한 화면에 아스키아트 효과를 씌워주자!
 effect.setSize(page.offsetWidth, page.offsetHeight);
 effect.domElement.style.color = 'gray';
 effect.domElement.style.backgroundColor = 'black';
@@ -158,7 +158,7 @@ function animate() {
     }
 }
 animate();
-setTimeout(() => { scene.remove(mesh) }, 6500);
+setTimeout(() => { scene.remove(mesh) }, 5200);
 setTimeout(() => {
     let fbxURL = "../model/Thriller Part 4.fbx"; //이스터에그...
     loader.load(fbxURL,
@@ -183,6 +183,8 @@ setTimeout(() => {
             scene.add(object);
             object.position.y = -110;
 
+            object.position.z = -250;
         }
     );
-}, 80000); //게임 오버 페이지에서 오래 기다리면 춤추는 좀비가 나와요...ㅋㅋㅋ
+}, 20000); //게임 오버 페이지에서 오래 기다리면 춤추는 좀비가 나와요...ㅋㅋㅋ
+setTimeout(() => { scene.remove(mesh) }, 10200);
