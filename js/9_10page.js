@@ -17,7 +17,7 @@ const pickHelper = new PickHelper(items); //상호작용 가능한 물체가 많
 const keyStates = {};
 const clock = new THREE.Clock(); //시계를 생성한다.
 
-zombieLoad();
+zombieIdleLoad();
 
 if (getCookie('2stage') != 'clear') {
     noYouCant.style.display = 'block';
