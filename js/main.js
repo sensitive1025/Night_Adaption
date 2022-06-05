@@ -229,6 +229,7 @@ function zombieLoad() {
             object.position.set(9, 0.5, 25);
             object.rotation.set(0, Math.PI, 0);
             scene.add(object);
+            console.log(object);
         }
     );
     setTimeout(() => { scene.remove(mesh) }, 1000);
