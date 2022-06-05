@@ -17,7 +17,7 @@ const pickHelper = new PickHelper(items); //상호작용 가능한 물체가 많
 const keyStates = {};
 const clock = new THREE.Clock(); //시계를 생성한다.
 
-zombieIdleLoad();
+zombieLoad();
 
 if (getCookie('2stage') != 'clear') {
     noYouCant.style.display = 'block';
@@ -49,9 +49,12 @@ function control() {
 function Run() {
     if (playerCollider.end.x > 6) {
         if (scream == false) {
+<<<<<<< HEAD
 
             playAudio("sounds/Zombie_Scream.mp3");
             zombieLoad();
+=======
+>>>>>>> cc61e0c6f6825cc0482a00052a33f007fca147e2
             var hint = document.getElementById("hint");
             hint.innerText = "도망가자.";
             hint.style.color = "#903016";
