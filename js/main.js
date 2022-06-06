@@ -298,9 +298,6 @@ function zombieCollisions() { //좀비가 물리적으로 접촉하고 있을 �
         playerCollider.start.y = 100;
         playerCollider.end.y = 100;
         container.remove();
-        audio = new Audio('sounds/Zombie_Scream.mp3'); //좀비 비명 소리
-        audio.volume = effectVolume.value / 100;
-        audio.play(); //재생
         setTimeout(() => {
             location.href = "GAMEOVER"; //게임 오버 페이지로 이동
         }, 1800);
