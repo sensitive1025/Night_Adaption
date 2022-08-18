@@ -74,8 +74,7 @@ function interactionManage(interacted, interactive, audio) {
 
 picking();
 
-function picking(time) {
-    time *= 0.001;
+function picking() {
     pickHelper.pick(pickScene, pickCamera);
     interacted = pickHelper.interactedOut();
     interactive = pickHelper.interactiveOut();

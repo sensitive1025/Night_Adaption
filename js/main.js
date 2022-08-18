@@ -229,8 +229,6 @@ function zombieLoad() {
             console.log(object);
         }
     );
-    setTimeout(() => { scene.remove(mesh) }, 1000);
-
 }
 
 document.addEventListener('keydown', (event) => { //키가 눌려져있는가?
@@ -298,6 +296,9 @@ function zombieCollisions() { //좀비가 물리적으로 접촉하고 있을 �
         playerCollider.start.y = 100;
         playerCollider.end.y = 100;
         container.remove();
+        audio = new Audio('sounds/Zombie_Scream.mp3'); //좀비 비명 소리
+        audio.volume = effectVolume.value / 100;
+        audio.play(); //재생
         setTimeout(() => {
             location.href = "GAMEOVER"; //게임 오버 페이지로 이동
         }, 1800);
@@ -366,7 +367,7 @@ function updateZombie(deltaTime) { //좀비의 위치 상태를 업데이트
 function zombieMove(deltaTime) { //좀비가 앞으로 향하는 벡터를 형성한다.
     zombieDirection.y = 0; //좀비의 이동 방향의 y축 성분 제거
     zombieDirection.normalize(); //좀비가 대각선으로 향한다면 벡터합에 의해 더 멀리 이동하므로 벡터의 크기를 정상화한다.
-    zombieVelocity.add(zombieDirection.multiplyScalar(deltaTime * (zombieOnFloor ? 40 : 8)));
+    zombieVelocity.add(zombieDirection.multiplyScalar(deltaTime * (zombieOnFloor ? 35 : 8)));
 }
 
 function zombieDirect() {

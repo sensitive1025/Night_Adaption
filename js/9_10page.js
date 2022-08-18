@@ -9,6 +9,7 @@ var container = document.getElementById('game'); //문서에서 game ID를 지�
 var info = document.getElementById('interact'); //문서에서 상호작용 가능을 알릴 객체
 const element = document.getElementById('mainstory');
 
+let runtrigger = false;
 let scream = 0;
 const pickCamera = camera;
 const pickScene = scene;
@@ -16,8 +17,6 @@ const items = ['null'];
 const pickHelper = new PickHelper(items); //상호작용 가능한 물체가 많아 items 배열에 저장하지 않고 본 스크립트에서 관할...
 const keyStates = {};
 const clock = new THREE.Clock(); //시계를 생성한다.
-
-zombieIdleLoad();
 
 if (getCookie('2stage') != 'clear') {
     noYouCant.style.display = 'block';
@@ -45,12 +44,12 @@ function control() {
         keyStates['KeyE'] = false; //다른 키와 달리, E는 단발로 눌려야 하므로 한번 입력이 감지되면 그 뒤 입력을 제한.
     }
 }
-
+zombieLoad();
 function Run() {
     if (playerCollider.end.x > 6) {
         if (scream == false) {
+            runtrigger = true;
             playAudio("sounds/Zombie_Scream.mp3");
-            zombieLoad();
             var hint = document.getElementById("hint");
             hint.innerText = "도망가자.";
             hint.style.color = "#903016";
@@ -111,10 +110,12 @@ picking();
 
 function picking(time) {
     const deltaTime = Math.min(0.05, clock.getDelta()) / 1.8;
+    if(runtrigger){
     for (let i = 0; i < 1.8; i++) {
         zombieMove(deltaTime);
         zombieDirect(deltaTime);
         updateZombie(deltaTime);
+    }
     }
     time *= 0.001;
     pickHelper.pick(pickScene, pickCamera);
